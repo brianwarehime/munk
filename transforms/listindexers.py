@@ -31,6 +31,9 @@ searchhead = config.get('splunk','searchhead')
 timeframe = config.get('splunk', 'timeframe')
 status = config.get('splunk', 'status')
 management = config.get('splunk','management')
+proxy = config.get('splunk', 'proxy')
+proxy_ip = config.get('splunk','proxy_ip')
+proxy_port = config.get('splunk', 'proxy_port')
 
 # Setting up Maltego entities and getting initial variables.
 
@@ -40,9 +43,15 @@ host = sys.argv[1]
 # Determine which REST call to make based on authentication setting.
 
 if auth == "1":
-	output = subprocess.check_output('curl -u ' + username + ':' + password + ' -s -k --data-urlencode search="search index=* earliest=' + timeframe + ' | table splunk_server | dedup splunk_server | rename splunk_server AS indexer" -d "output_mode=csv" https://' + searchhead + ':' + management + '/servicesNS/admin/search/search/jobs/export', shell=True)
-if auth == "0":
-	output = subprocess.check_output('curl -s -k --data-urlencode search="search index=* earliest=' + timeframe + ' | table splunk_server | dedup splunk_server | rename splunk_server AS indexer" -d "output_mode=csv" https://' + searchhead + ':' + management + '/servicesNS/admin/search/search/jobs/export', shell=True)
+	if proxy == "1":
+		output = subprocess.check_output('curl -u ' + username + ':' + password + ' -s -k --socks5 ' + proxy_ip + ':' + proxy_port + ' --data-urlencode search="search index=* earliest=' + timeframe + ' | table splunk_server | dedup splunk_server | rename splunk_server AS indexer" -d "output_mode=csv" https://' + searchhead + ':' + management + '/servicesNS/admin/search/search/jobs/export', shell=True)
+	else:
+		output = subprocess.check_output('curl -u ' + username + ':' + password + ' -s -k --data-urlencode search="search index=* earliest=' + timeframe + ' | table splunk_server | dedup splunk_server | rename splunk_server AS indexer" -d "output_mode=csv" https://' + searchhead + ':' + management + '/servicesNS/admin/search/search/jobs/export', shell=True)		
+else:
+	if proxy == "1":
+		output = subprocess.check_output('curl -s -k --socks5 ' + proxy_ip + ':' + proxy_port + ' --data-urlencode search="search index=* earliest=' + timeframe + ' | table splunk_server | dedup splunk_server | rename splunk_server AS indexer" -d "output_mode=csv" https://' + searchhead + ':' + management + '/servicesNS/admin/search/search/jobs/export', shell=True)
+	else:
+		output = subprocess.check_output('curl -s -k --data-urlencode search="search index=* earliest=' + timeframe + ' | table splunk_server | dedup splunk_server | rename splunk_server AS indexer" -d "output_mode=csv" https://' + searchhead + ':' + management + '/servicesNS/admin/search/search/jobs/export', shell=True)
 
 # Regex to find Indexers
 

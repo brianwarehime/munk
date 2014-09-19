@@ -31,6 +31,9 @@ searchhead = config.get('splunk','searchhead')
 timeframe = config.get('splunk', 'timeframe')
 status = config.get('splunk', 'status')
 management = config.get('splunk','management')
+proxy = config.get('splunk', 'proxy')
+proxy_ip = config.get('splunk','proxy_ip')
+proxy_port = config.get('splunk', 'proxy_port')
 
 # Setting up Maltego entities and getting initial variables.
 
@@ -40,11 +43,16 @@ host = sys.argv[1]
 # Determine which REST call to make based on authentication setting.
 
 if auth == "1":
-	output = subprocess.check_output('curl -u ' + username + ':' + password + ' -s -k https://' + searchhead + ':' + management + '/services/deployment/client', shell=True)
+	if proxy == "1":
+		output = subprocess.check_output('curl -u ' + username + ':' + password + ' --socks5 ' + proxy_ip + ':' + proxy_port + ' -s -k https://' + searchhead + ':' + management + '/services/deployment/client', shell=True)
+	else:
+		output = subprocess.check_output('curl -u ' + username + ':' + password + ' -s -k https://' + searchhead + ':' + management + '/services/deployment/client', shell=True)
 
-if auth == "0":
-	output = subprocess.check_output('curl -s -k https://' + searchhead + ':' + management + '/services/deployment/client', shell=True)
-
+else:
+	if proxy == "1":
+		output = subprocess.check_output('curl -s -k --socks5 ' + proxy_ip + ':' + proxy_port + ' https://' + searchhead + ':' + management + '/services/deployment/client', shell=True)
+	else:
+		output = subprocess.check_output('curl -s -k https://' + searchhead + ':' + management + '/services/deployment/client', shell=True)
 # Regex to find Deployment Servers
 
 dservers = re.findall(r'key name="targetUri">(.*):\d{1,5}', output)
