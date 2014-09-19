@@ -21,6 +21,8 @@ In munk.conf there is also a setting for timeframe. This will change your search
 
 Also in munk.conf there is a setting for status. If this value is set to 1, the box that Maltego is running on will attempt to ping the entity you are displaying, such as the host, indexer, or deployment server.
 
+There is now a setting in the munk.conf for SOCKS5 proxy support when communicating with your Splunk servers. To enable, just turn on proxy support, proxy=1, then just enter your proxy IP and port.
+
 Lastly, there are two different settings for the various ports you configured in Splunk, splunkweb and the management port. Change these to reflect your environment.
 
 ### Using Munk
