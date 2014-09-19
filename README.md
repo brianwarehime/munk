@@ -43,3 +43,4 @@ Along with mapping our your Splunk toplogy, you can map our your Deployment Serv
 
 With Munk, you also have the ability to open a Splunk search starting with the entity you clicked on. For example, if you were to right-click on an Index and selected “Run Transform”, then “Splunk Entity Search”, it would open your default browser to a Splunk page with “index=”selected index”. This capability extends to host, sourcetype and index for now.
 
+Here is a short video going over the different functions of Munk: https://www.youtube.com/watch?v=41Kz6c7sq3E
